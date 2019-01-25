@@ -265,6 +265,103 @@ public class Solution2 {
         return head;
     }
 
+    public int[] deckRevealedIncreasing(int[] deck) {
+        if (deck == null || deck.length == 0) {
+            return deck;
+        }
+
+        Arrays.sort(deck);
+        Deque<Integer> deque = new LinkedList<Integer>();
+        deque.offerFirst(deck[deck.length - 1]);
+        for (int i = deck.length - 2; i >= 0; i--) {
+            deque.offerFirst(deque.pollLast());
+            deque.offerFirst(deck[i]);
+        }
+
+        int[] res = new int[deck.length];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = deque.pollFirst();
+        }
+
+        return res;
+    }
+
+    public List<Integer> pancakeSort(int[] A) {
+        List<Integer> res = new ArrayList<Integer>();
+        if (A == null || A.length == 0) {
+            return res;
+        }
+
+        int idx = A.length;
+        while (idx > 0) {
+            int maxId = 0;
+            for (int i = 0; i < idx; i++) {
+                if (A[i] == idx) {
+                    maxId = i;
+                    break;
+                }
+            }
+
+            if (maxId > 0) {
+                res.add(maxId + 1);
+                reverse(A, maxId + 1);
+            }
+
+            res.add(idx);
+            reverse(A, idx);
+            System.out.println(res);
+            idx --;
+        }
+
+        return res;
+    }
+
+    public void reverse(int[] A, int idx) {
+        int i = 0, j = idx - 1;
+        while (i < j) {
+            int tmp = A[i];
+            A[i] = A[j];
+            A[j] = tmp;
+            i++;
+            j--;
+        }
+    }
+
+    public List<Integer> pancakeSort1(int[] A) {
+        List<Integer> res = new ArrayList<Integer>();
+        LinkedList<Integer> nums = new LinkedList<>();
+
+        for (int num: A) {
+            nums.add(num);
+        }
+
+        int max =  A.length;
+        for (int len = A.length; len > 0; len--) {
+            LinkedList<Integer> next = new LinkedList<>();
+            for (int i = len - 1; i >= 0; i--) {
+                if (nums.get(i) == max) {
+                    max --;
+                    if (i == len - 1) {
+                        break;
+                    }
+
+                    res.add(i + 1);
+                    res.add(len);
+                    for (int j = 0; j <= i; j++) {
+                        next.offerLast(nums.get(j));
+                    }
+
+                    nums = next;
+                    break;
+                } else {
+                    next.offerLast(nums.get(i));
+                }
+            }
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         Solution2 s = new Solution2();
 
@@ -272,7 +369,7 @@ public class Solution2 {
         node.left = new TreeNode(2);
         node.right = new TreeNode(-3);
 
-        int a[] = {73,74,75,71,69,72,76,73};
+        int a[] = {3, 2, 4, 1};
         String[] words = {"abcw","baz","foo","bar","xtfn","abcdef"};
 
         ListNode lnode = new ListNode(1);
@@ -281,7 +378,7 @@ public class Solution2 {
         lnode.next.next.next = new ListNode(4);
         lnode.next.next.next.next = new ListNode(5);
 
-        System.out.println(s.oddEvenList(lnode));
+        System.out.println(s.pancakeSort(a));
 
     }
 }
